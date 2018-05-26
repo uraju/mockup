@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body {margin:0;}
+
+.icon-bar {
+    width: 100%;
+    background-color: #888;
+    overflow: auto;
+}
+
+.icon-bar a {
+    float: left;
+    width: 60px;
+    text-align: center;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 24px;
+    border: 2px solid #555;
+}
+
+.icon-bar a:not(:last-child) {
+    border-right: none; /* Prevent double borders */
+}
+.icon-bar a:hover {
+    background-color: #000 !important;
+}
+
+.icon-bar a.selected {
+    background-color: #555;
+}
+</style>
+<script>
+function toggleSelected(obj) {
+    obj.classList.toggle("selected");
+}
+</script>
+</head>
+<body>
+
+<div class="icon-bar">
+  <a onclick="toggleSelected(this)" href="#"><i class="fa fa-bold"></i></a> 
+  <a onclick="toggleSelected(this)" href="#"><i class="fa fa-italic"></i></a> 
+  <a onclick="toggleSelected(this)" href="#"><i class="fa fa-font"></i></a> 
+  <a onclick="toggleSelected(this)" href="#"><i class="fa fa-underline"></i></a>
+</div>
+
+</body>
+</html> 

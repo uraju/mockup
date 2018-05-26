@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.css"></link>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+    body {margin:0;}
+    .icon-bar {
+        width: 100%;
+        background-color: #888;
+        overflow: auto;
+    }
+    .icon-bar a {
+        float: left;
+        width: 50px;
+        text-align: center;
+        padding: 12px 0;
+        transition: all 0.3s ease;
+        color: white;
+        font-size: 18px;
+        border: 2px solid #555;
+    }
+    .icon-bar a:not(:last-child) {
+        border-right: none; /* Prevent double borders */
+    }
+    .icon-bar a:hover {
+        background-color: #000 !important;
+    }
+    .icon-bar a.btnspace {
+        width:15px;
+    }
+    .icon-bar a.btnrule {
+        float: right;
+        width:90px;
+    }
+    .icon-bar a.selected {
+        background-color: #555;
+    }
+    </style>
+    <script>
+    let TAG_SPAN_CIRCLE_START = '<span class="ui red circular';
+    let TAG_SPAN_START = '<span';
+    let TAG_SPAN_CLOSE = '</span>';
+    let P_START = '<p>';
+    let P_END = '</p>';
+    count = (inputString, searachString) => {
+        inputString += '';
+        //searachString += '';
+        if (searachString.length <= 0) {
+            return 0;
+        }
+        var subStr = searachString.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return (inputString.match(new RegExp(searachString, 'gi')) || []).length;
+    };
+    cleanAllSpans = (html) => {
+        // console.log('in cleanAllSpans');
+        return cleanSpan(cleanSpanCircular(html));
+    };
+    cleanSpan = (html) => {
+        // removes all span tag entries
+        //console.log('in cleanSpan');
+        while (-1 < html.indexOf(TAG_SPAN_START)) {
+            html = cleanSpanSingle(html);
+        }
+        return html;
+    };
+    cleanSpanSingle = (html) => {
+        // removes one single span, keeps data
+        //console.log('in cleanSpanSingle')
+        let start = 0, end = 0, _html = '';
+        start = html.indexOf(TAG_SPAN_START);
+        if (start > -1) {
+            //console.log('cleanSpan Start');
+            _html = html.substring(0,start);
+            html = html.substring(start);
+            //console.log(_html);
+            //console.log(html);
+        }
+        end = html.indexOf(">");
+        if (end > -1) {
+            //console.log('cleanSpan End');
+            html = html.substring(end + 1); // add length of </span>
+            //console.log(html);
+            html = _html + html;
+            //console.log('cleanSpanCircular Leftofer')
+            //console.log(html);
+        }
+        start = html.indexOf(TAG_SPAN_CLOSE);
+        if (start > -1) {
+            //console.log('cleanSpan TAG_SPAN_CLOSE');
+            _html = html.substring(0,start);
+            html = _html + html.substring(start + TAG_SPAN_CLOSE.length);
+            //console.log(_html);
+            //console.log(html);
+        }
+        return html;
+    };    
+cleanSpanCircular = (html) => {
+    // removes all circular span and it's data
+    //console.log('in cleanSpanCircular');
+    while (-1 < html.indexOf(TAG_SPAN_CIRCLE_START)) {
+        html = cleanSpanCircularSingle(html);
+    }
+    return html;
+};
+cleanSpanCircularSingle = (html) => {
+    // removes single circular span and it's data
+    //console.log('in cleanSpanCircularSingle')
+    //console.log(html);
+    let start = 0, end = 0, _html = '';
+    start = html.indexOf(TAG_SPAN_CIRCLE_START);
+    //console.log('start: ' + start);
+    if (start > -1) {
+        //console.log('cleanSpanCircular Start ' + start);
+        _html = html.substring(0,start);
+        html = html.substring(start);
+        //console.log(_html);
+        //console.log(html);
+    }
+    end = html.indexOf(TAG_SPAN_CLOSE);
+    //console.log(end);
+    if (end > -1) {
+        //console.log('cleanSpanCircular End ' + end);
+        html = html.substring(end + TAG_SPAN_CLOSE.length); 
+        if (html.substring(0,1) == ' '){
+            html.substring(1);  // VERIFY for two spaces 
+        }
+        // add length of </span> + one space ' '
+        //console.log(html);
+        html = _html + html;
+        //console.log('cleanSpanCircular Leftofer')
+        //console.log(html);
+    }
+    return html;
+};
+
+function getSelectionCharOffsetsWithin() {
+    var start = 0, end = 0, text='', circleSpansTextLength = 0, circularOnly = false;
+    var sel, range, priorRange, spanRange, doRangeOffsetSpan = false;
+    var snippet, page, loop;
+    sel = window.getSelection();
+    let tag, pageHTML, pageOriginal, snippetOuterHTML, sinppetIndex =0, cnt;
+    let rangeOffset = 0, offsetStart = 0, offsetEnd = 0, snippetText = '', description = '', computedDesc='';
+    let elm, elm1, elmStart, elmEnd, elmList=[], noOrphanTag = true, results = [], result;
+    //console.log(window.getSelection())
+    if (typeof window.getSelection() != "undefined" ) {
+        try {
+        range = window.getSelection().getRangeAt(0);
+        console.log(range);
+        elmStart = range.startContainer;
+        elmEnd = range.endContainer;
+        console.log(elmStart);
+        console.log(elmEnd);
+        elmList.push(elmStart);
+        if(!elmStart.isSameNode(elmEnd)) {
+            elm = elmStart.nextSibling;
+            while((elm != null) && !(elm.isSameNode(elmEnd) || elm.isSameNode(elmStart))) {
+                console.log(elm);
+                if (elm.hasChildNodes) {
+                    elm1 = elm.childNodes[0];
+                    console.log(elm1);
+                    if (elm1) {
+                        if (elm1.isEqualNode(elmEnd)) {
+                            console.log('operlaping span')
+                            break;
+                        }
+                    }
+                }
+                elmList.push(elm);
+                elm = elm.nextSibling;
+            }
+            elmList.push(elmEnd);
+        }
+        console.log(elmList);
+        console.log('elmList.length ' + elmList.length)
+        // compute total circle span length (circleSpansTextLength) in seleted elmList, that needs to be
+        // subtracted for start offset, has issue subtracting length for last element
+        if (elmList.length > 1) {
+            for (var idx = 0; idx < (elmList.length - 1); idx++) {
+                elm = elmList[idx];
+                if (elm.hasChildNodes) {
+                    doRangeOffsetSpan = true;
+                    elm1 = elm.childNodes[1];
+                    console.log(elm1);
+                    if (elm1 != null) {
+                        if(elm1.outerHTML.startsWith(TAG_SPAN_CIRCLE_START)){
+                            circleSpansTextLength = circleSpansTextLength + elm1.innerText.length;
+                            console.log('circleSpansTextLength ' + circleSpansTextLength);
+                        }
+                    }
+                } 
+            }
+        }
+        let totalSnippet = ''; // used for snippet text for compined list
+        if (elmList.length > 1) {
+            for (var idx = 0; idx < elmList.length; idx++) {
+                elm = elmList[idx];
+                totalSnippet = totalSnippet + elm.nodeValue;
+            }
+        }
+
+        // always returns closest common parent on overlaping tags
+        tag = range.commonAncestorContainer.parentNode.outerHTML;
+        //console.log('range.commonAncestorContainer.parentNode.outerHTML');
+        //console.log(tag);
+        // test to make sure not just circluar annotion selected
+        if (tag.startsWith(TAG_SPAN_CIRCLE_START)) {
+            // reject and warn user as invalid selction in case of true
+            circularOnly = true;
+        }
+        snippet = range.startContainer.parentElement;
+        tag = snippet.outerHTML;
+        if (tag.startsWith(TAG_SPAN_START)) {
+            if (!tag.startsWith(TAG_SPAN_CIRCLE_START)) {
+                doRangeOffsetSpan = true;
+            }
+        }
+        console.log('snippet');
+        console.log(snippet);
+        //console.log(tag);
+        if (tag.startsWith('<div')) {
+            page = snippet;
+            //noOrphanTag = false;
+
+
+        } else {
+            // need different alternate to stop on body or html tag
+            while (!(tag.startsWith('<p') || tag.startsWith('<P')|| tag.startsWith('<body') || tag.startsWith('<BODY'))) {
+                snippet = snippet.parentElement;
+                console.log(tag);
+                tag = snippet.outerHTML;
+            }
+            page = snippet.parentElement;
+            tag = page.outerHTML;
+            console.log('page');
+            console.log(page);
+            //console.log(tag);
+            while (!(tag.startsWith('<div') || tag.startsWith('<DIV')|| tag.startsWith('<body') || tag.startsWith('<BODY'))) {
+                page = page.parentElement;
+                console.log(page);
+                tag = page.outerHTML;
+            }
+        }
+        //console.log(range.startContainer);
+        //console.log(snippet);
+        pageOriginal = page.outerHTML;
+        pageHTML = cleanAllSpans(pageOriginal);
+        snippetOuterHTML = cleanAllSpans(snippet.innerHTML);        
+        priorRange = range.cloneRange();
+        priorRange.selectNodeContents(page);
+        priorRange.setEnd(range.startContainer, range.startOffset);
+        start = priorRange.toString().length;
+        end = start + range.toString().length;
+        text = range.toString();
+        rangeOffset = range.startOffset;
+        console.log('rangeOffset: ' + rangeOffset);
+        cnt = 0;
+        if (doRangeOffsetSpan) {
+            var dup = snippet.cloneNode();
+            spanRange = document.createRange();
+            spanRange.selectNodeContents(snippet);
+            spanRange.setEnd(range.startContainer, range.startOffset);
+            rangeOffset = spanRange.toString().length;
+            console.log('spanRange.toString()');
+            console.log(spanRange.toString());
+            console.log('rangeOffset In span: ' + rangeOffset);
+        } 
+//         console.log('pageHTML: ');
+//         console.log(pageHTML);
+//         console.log('snippetOuterHTML: ');
+//         console.log(snippetOuterHTML);
+//         console.log('priorRange toString: ' + priorRange.toString().length);
+//         console.log(priorRange.toString()); 
+        if(noOrphanTag){
+            sinppetIndex = count(priorRange.toString(), snippetOuterHTML); // check repeats
+            offsetStart = pageHTML.indexOf(snippetOuterHTML); // snippet tag start
+            snippetText = snippetOuterHTML;
+        } else { // need more testing
+            snippetText = elmStart.nodeValue;
+            sinppetIndex = count(priorRange.toString(), snippetText)
+            offsetStart = pageHTML.indexOf(snippetText);
+            snippetOuterHTML = snippetText;
+        }
+        console.log('sinppetIndex ' + sinppetIndex);
+        cnt = 0;
+        console.log('idx: ' + cnt + ', offsetStart ' + offsetStart);
+        while (cnt < sinppetIndex) {
+            cnt++;
+            if (-1 < pageHTML.indexOf(snippetOuterHTML, offsetStart)) {
+                offsetStart = pageHTML.indexOf(snippetOuterHTML, (offsetStart + 1));
+                console.log('idx: ' + cnt + ', offsetStart ' + offsetStart);
+            }
+        }
+        description = range.toString();
+        offsetStart = offsetStart + rangeOffset;
+        offsetEnd = offsetStart + description.length - circleSpansTextLength;
+        // if(!noOrphanTag){
+        //     offsetStart = start;
+        //     offsetEnd = end;
+        // }
+        computedDesc = pageHTML.substring(offsetStart, offsetEnd);
+        console.log(offsetStart + ' ' + offsetEnd);
+        var _end = computedDesc.indexOf(P_END);
+        var _shift = 0;
+        var _idx = 0, _tx='', _tx1='';
+        let _st = offsetStart, _en = offsetEnd;
+        console.log(computedDesc);
+        while (-1 != _end) { // TODO: change to while
+            console.log('P_END');
+            _en = _st + _end;
+            result = {
+                offsetStart: _st,
+                offsetEnd: _en,
+                snippetText: totalSnippet,
+                description: description  // may need to replace with computedDesc
+            }
+            results.push(result);
+            _tx1 = pageHTML.substring(offsetEnd, (offsetEnd + P_END.length)); 
+            offsetEnd = offsetEnd + P_END.length;
+            _tx = computedDesc.substring(0,_end);
+            computedDesc = _tx + computedDesc.substring(_end + P_END.length) + _tx1;
+            console.log(computedDesc);
+            _end = computedDesc.indexOf(P_START, _end);
+            if (-1 != _end) {
+                _st = offsetStart + _end + P_START.length;
+                _tx1 = pageHTML.substring(offsetEnd, (offsetEnd + P_START.length));
+                offsetEnd = offsetEnd + P_START.length;
+                _tx = computedDesc.substring(0,_end);
+                computedDesc = _tx + computedDesc.substring(_end + P_START.length) + _tx1;
+                _en = _st + _end;
+                console.log(computedDesc);
+                _end = computedDesc.indexOf(P_END);  //TODO: back to while loop
+            }
+            _idx++;
+            if (idx > 3) {
+                //break;
+            }
+        }
+
+        if (results.length > 0) {
+            result = {
+                offsetStart: _st,
+                offsetEnd: _en,
+                snippetText: totalSnippet,
+                description: description  // may need to replace with computedDesc
+            }
+            results.push(result);
+        }
+        if (description == computedDesc) {
+            //console.log('description == computedDesc ' + description)
+        } else {
+            console.log('description <> computedDesc "' + description + '" "' + computedDesc + '"');
+        }
+        //var documentFragment = cloneRange.extractContents();
+        //console.log('documentFragment: ');
+        //console.log(documentFragment);
+        //console.log('*************************************************');
+        } catch (error) {
+            //DOM Exception
+            console.log(error);
+        }
+    } 
+
+    if (results.length == 0) {
+        result = {
+                offsetStart: offsetStart,
+                offsetEnd: offsetEnd,
+                snippetText: snippetText,
+                description: computedDesc  // may need to replace with computedDesc
+        }  
+        results.push(result);      
+    }
+    return {
+        pageHTML: pageHTML,
+        results: results,
+        computedDesc: computedDesc,
+        start: start,
+        end: end,
+        text: text, 
+        circularOnly: circularOnly
+    };
+}
+
+function printSelection() {
+    var sel = getSelectionCharOffsetsWithin();
+    var pval = document.getElementById("result");
+    var _txt = '';
+    //console.log('selection: ');
+    console.log(sel);
+    if (sel.circularOnly) {
+        _txt = "Selected Cirular only, invalid text";
+    } else if (sel.text.length > 0) {
+        _txt = "Start: " + sel.start + ", End: " + sel.end + ", Text: '" + sel.text + "', length: " + sel.text.length;
+    } else {
+        _txt = "No selection found.";
+    }
+    pval.innerText =  "Selected Text: " +  _txt;
+}
+function clearSelection() {
+    var pval = document.getElementById("result");
+    pval.innerText =  "Selected Text:" ;
+}
+
+function toggleRule(obj) {
+    obj.classList.toggle("selected"); //filp css style 'selected'
+}
+function applyRules() {
+    var selObj = window.getSelection();
+   //console.log(selObj);
+   var list = $(".icon-bar > a.selected");
+   if(list.length > 0){
+       list.map((index, elm) => {
+           console.log(elm.id);
+       })
+   }
+        
+}
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    //$(".intro, .demo, .end").css("background-color", "yellow");
+    console.log('doc ready');
+});
+</script>
+</head>
+<body>
+<h3 id="result" unselectable="on" >Selected Text:</h3>
+<br />
+<input type="button" onclick="printSelection()" unselectable="on" value="Get selection offset">
+<input type="button" onclick="clearSelection()" unselectable="on" value="Reset results">
+<div class="icon-bar">
+        <a id="bold" onclick="toggleRule(this)" href="#"><i class="fa fa-bold"></i></a> 
+        <a id="italic" onclick="toggleRule(this)" href="#"><i class="fa fa-italic"></i></a> 
+        <a id="underline" onclick="toggleRule(this)" href="#" ><i class="fa fa-underline"></i></a>
+        <a id="para" onclick="toggleRule(this)" href="#"><strong>P</strong></a> 
+        <a id="hide" onclick="toggleRule(this)" href="#" style="border-right: 2px solid #555;"><strong>H</strong></a>
+        <a onclick="applyRules(this)" class="btnrule"href="#">Apply Rule</a>
+      </div>
+
+<div id="main">
+    <div id="selectDiv1">
+        <p>So, <span>you cold?</span></p>
+        <p>yes</p><p>no</p>
+        <p></p> 
+        text with no p tag
+        text with no p tag
+        text with no p tagXX
+        text with no p tag
+        
+        <p>Do you see any <span class="ui grey label">Teletubbies in here? Do you see a slender <span class="ui red circular label">200</span></span> plastic tag clipped to my shirt with my name printed on it? Do you see a little Asian child with a blank <span class="ui green label">expression on his face sitting outside on a mechanical helicopter<span class="ui red circular label">3</span></span> that shakes when you put quarters in it? No? Well, that's what you see at a toy store. And you must think you're in a toy store, because you're here shopping for an infant named Jeb. </p>
+
+        <p>So, <span class="ui blue label">you cold?</span></p>
+        <p>The path of the righteous man is beset on all sides by the iniquities of the selfish and the tyranny of evil men. Blessed is he who, in the name of charity and good will, shepherds the weak through the valley of darkness, for he is truly his brother's keeper and the finder of lost children. And I will strike down upon thee with great vengeance and furious anger those who would attempt to poison and destroy My brothers. And you will know My name is the Lord when I lay My vengeance upon thee. </p>
+        text with no p tag
+
+        <p>I'm serious as a heart attack</p>
+        <p>Do you see any Teletubbies in here? Do you see a slender plastic tag clipped to my shirt with my name printed on it? Do you see a little Asian child with a blank expression on his face sitting outside on a mechanical helicopter that shakes when you put quarters in it? No? Well, that's what you see at a toy store. And you must think you're in a toy store, because you're here shopping for an infant named Jeb. </p>
+        text with no p tag
+        <p>Is she dead, yes or no?</p>
+        <p>Like you, I used to think the world was this great place where everybody lived by the same standards I did, then some kid with a nail showed me I was living in his world, a world where chaos rules not order, a world where righteousness is not rewarded. That's Cesar's world, and if you're not willing to play by his rules, then you're gonna have to pay the price. </p>
+        text with no p tag
+        <p>Is she dead, yes or no?</p>
+        <p>Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends. </p>
+    </div>
+    <div id="selectDiv2">
+        <p>yes</p><p>no</p>
+        <p> some more contents here</p>
+        <p></p> text with no p tag
+        <p>
+        <p>Do you see any <span class="ui grey label">Teletubbies in here? Do you see a slender <span class="ui red circular label">2</span></span> plastic tag clipped to my shirt with my name printed on it? Do you see a little Asian child with a blank <span class="ui green label">expression on his face sitting outside on a mechanical helicopter<span class="ui red circular label">3</span></span> that shakes when you put quarters in it? No? Well, that's what you see at a toy store. And you must think you're in a toy store, because you're here shopping for an infant named Jeb. </p>
+        
+        <p>So, <span>you cold?</span></p>
+        <p>The path of the righteous man is beset on all sides by the iniquities of the selfish and the tyranny of evil men. Blessed is he who, in the name of charity and good will, shepherds the weak through the valley of darkness, for he is truly his brother's keeper and the finder of lost children. And I will strike down upon thee with great vengeance and furious anger those who would attempt to poison and destroy My brothers. And you will know My name is the Lord when I lay My vengeance upon thee. </p>
+        
+        <p>I'm serious as a heart attack</p>
+        <p>Do you see any Teletubbies in here? Do you see a slender plastic tag clipped to my shirt with my name printed on it? Do you see a little Asian child with a blank expression on his face sitting outside on a mechanical helicopter that shakes when you put quarters in it? No? Well, that's what you see at a toy store. And you must think you're in a toy store, because you're here shopping for an infant named Jeb. </p>
+        
+        <p>Is she dead, yes or no?</p>
+        <p>Like you, I used to think the world was this great place where everybody lived by the same standards I did, then some kid with a nail showed me I was living in his world, a world where chaos rules not order, a world where righteousness is not rewarded. That's Cesar's world, and if you're not willing to play by his rules, then you're gonna have to pay the price. </p>
+        
+        <p>Is she dead, yes or no?</p>
+        <p>Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends. </p>
+    </div>
+</div>
+<div style="display:none;">
+<a href="http://slipsum.com">lorem ipsum</a></div>
+
+<!-- end slipsum code -->
+</div>
+
+</body>
+</html>
