@@ -144,7 +144,7 @@ if (typeof window.getSelection() != "undefined" ) {
                 console.log(elm1);
                 if (elm1 != null) {
                     if(elm1.outerHTML.startsWith(TAG_SPAN_CIRCLE_START)){
-                        circleSpansTextLength = circleSpansTextLength + elm1.innerText.length;
+                        circleSpansTextLength = circleSpansTextaLength + elm1.innerText.length;
                         console.log('circleSpansTextLength ' + circleSpansTextLength);
                     }
                 }
@@ -310,7 +310,8 @@ if (typeof window.getSelection() != "undefined" ) {
     if (description == computedDesc) {
         //console.log('description == computedDesc ' + description)
     } else {
-        console.log('description <> computedDesc "' + description + '" "' + computedDesc + '"');
+        // TODO: Uma, enable in case of error
+        //console.log('description <> computedDesc "' + description + '" "' + computedDesc + '"');
     }
     //var documentFragment = cloneRange.extractContents();
     //console.log('documentFragment: ');
@@ -364,8 +365,16 @@ pval.innerText =  "Selected Text:" ;
 
 function toggleRule(obj) {
     obj.classList.toggle("selected"); //filp css style 'selected'
+    console.log($("#selectedText"));
+    $("#selectedText").removeClass();
+    var style = getCurrentRules().trim();
+    if (style.length > 0) {
+        console.log(style);
+        $("#selectedText").addClass(style);
+    }
 }
 let ruleCount = 0;
+let rules = [];
 function getRuleId() {
     ruleCount++;
     var ruleid = "00000" + ruleCount;
@@ -385,7 +394,7 @@ function getCurrentRules() {
     return style;
 }
 function applyRules() {
-    var rule = {};
+    var rule = {show: true};
     var style = '';
     var sel = getSelectionCharOffsetsWithin();
     var selObj = window.getSelection();
@@ -401,6 +410,9 @@ function applyRules() {
         rule.style = style;
         rule.text = selObj.toString();
         var sel = getSelectionCharOffsetsWithin();
+        rule.extended = sel;//may be limit to start and end?
+        rules.push(rule); //store in global variable for later use
+        //console.log(rules);
         var _htm =  _htm0.substring(0, sel.start);
         //console.log(_htm);
         _htm =  _htm + '<span id="' + rule.id + '" class="'+ style + '">' + _htm0.substring(sel.start, sel.end) + '</span>'
@@ -409,7 +421,7 @@ function applyRules() {
         //console.log(_htm);
         //console.log(sel);
         document.getElementById("previewDiv").innerHTML = _htm;
-        
+        // update rule history table
         var _history = document.getElementById("ruleHistory").innerHTML;
         //console.log('_history :'+ _history.trim.length);
         //console.log(_history);
@@ -420,11 +432,15 @@ function applyRules() {
         onerow = onerow + '<a href="#">Hide</a> <a href="#">Delete</a></p></div></div>';
         //console.log(onerow);
         if (_history.trim().length === 0) {
-            var heading = '<div class="row">';
-            heading = heading +'<div class="column1"><h3>Rule ID</h2></div>';
-            heading = heading +'<div class="column2"><h3>Rules</h2></div>';
-            heading = heading +'<div class="column3"><h3>Selected Text</h2></div>';
-            heading = heading +'<div class="column4"><h3>Action</h2></div></div>';
+            var heading = '<div style="width: 100%;">'
+            heading = heading + '<span style="float:right;"><a href="#">Show Rules</a> / '
+            heading = heading + '<a href="#">Hide All</a> / '
+            heading = heading + '<a href="#">Delete All</a></span><hr /></div>'
+            heading = heading + '<div class="row">';
+            heading = heading + '<div class="column1"><h3>Rule ID</h2></div>';
+            heading = heading + '<div class="column2"><h3>Rules</h2></div>';
+            heading = heading + '<div class="column3"><h3>Selected Text</h2></div>';
+            heading = heading + '<div class="column4"><h3>Action</h2></div></div>';
             _history = heading;
         } 
         _history = _history + onerow;

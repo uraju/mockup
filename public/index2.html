@@ -30,9 +30,18 @@
     .icon-bar a.btnspace {
         width:15px;
     }
-    .icon-bar a.btnrule {
-        float: right;
+    a.btnrule {
         width:90px;
+        text-align: center;
+        padding: 6px;
+        transition: all 0.3s ease;
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+        border: 1px solid #555;
+        background-color: #ccc;
+        margin-top: 3px;
+        margin-bottom: 3px;
     }
     .icon-bar a.selected {
         background-color: #555;
@@ -65,11 +74,12 @@
 }
 .column1 {
     float: left;
-    width: 16%;
+    width: 6%;
     padding-left: 3px;
     padding-right: 3px;
     border-left: 2px solid #ccc;
     border-top: 2px solid #ccc;
+    display: none; /* hide now, use for sequence number, if necessary */
 }
 .column2 {
     float: left;
@@ -89,7 +99,7 @@
 }
 .column4 {
     float: right;
-    width: 6%;
+    width: 16%;
     padding-left: 3px;
     padding-right: 3px;
     border-left: 2px solid #ccc;
@@ -103,6 +113,9 @@
 }
 .display-none {
     display: none;
+}
+#selectedText {
+    padding-bottom: 10px;
 }
     </style>
 </head>
@@ -136,9 +149,10 @@
                         </div>
                     </td>
                     <td><!-- text preview of source -->
+                        <div>
                         <p>Rule History: </p>
-                        <div style="display: block;"><span style="float:right;"><a href="#">Hide ALL</a> <a href="#">Delete ALL</a></span></div>
                         <div id="ruleHistory"></div>
+                        </div>
                     </td>
                 </tr>            
         </table>
@@ -148,7 +162,6 @@
             <h2>Define Rule</h2>
             <hr />
             <div><p>Selected Text:</p><p id="selectedText"></p></div>
-            <hr />
             <div class="icon-bar">
                 <a id="rule-bold" onclick="toggleRule(this)" href="#"><i class="fa fa-bold"></i></a> 
                 <a id="rule-italic" onclick="toggleRule(this)" href="#"><i class="fa fa-italic"></i></a> 
@@ -156,10 +169,19 @@
                 <a id="rule-para" onclick="toggleRule(this)" href="#"><strong>P</strong></a> 
                 <a id="rule-hidden" onclick="toggleRule(this)" href="#" style="border-right: 2px solid #555;"><strong>H</strong></a>
             </div>
-            <div class="icon-bar">
+            <div>
+                <input type="checkbox" id="apply-to-full-doc" name="apply-to-full-doc" value="apply-full">
+                <label for="subscribeNews">Apply to full document?</label>
+                <h4>Global Rules:</h4>
+                <input type="checkbox" id="select-all-caps" name="select-all-caps" value="select-all-caps">
+                <label for="subscribeNews">Select all caps words?</label><br/>
+                <input type="checkbox" id="select-all-phone" name="select-all-phone" value="select-all-phone">
+                <label for="subscribeNews">Select all phone(s)?</label><br/>
+                <input type="checkbox" id="select-all-name" name="select-all-name" value="select-all-name">
+                <label for="subscribeNews">Select all name/address?</label>
+                <hr/>
                 <a onclick="applyRules(this)" class="btnrule"href="#">Apply Rule</a>
             </div>
-            
         </div>
     </div>
     <div id="htmlSrc" class="display-none">
@@ -220,10 +242,12 @@ $('#previewDiv').on('mouseup', function() {
             //setEvent: 'mouseup', // use your event like 'mouseover', 'touchmove', etc.
             //onLoad: function (elem) { ... }, // set custom call before popin is inited..
             onLoad: function (element) {
-                    console.log('This function will be called before dialog is initialized');
+                    //triggers
+                    //console.log('This function will be called before dialog is initialized');
                 },
             onUnload: function (element) {
-                    console.log('This message will be shown after dialog is closed');
+                    //triggers
+                    //console.log('This message will be shown after dialog is closed');
                 },
             //onUnload: function (elem) { ... }, // ..and after it was closed
             template: $("#ruleDialog").html() // or function (elem) { ... }
