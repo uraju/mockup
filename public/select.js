@@ -365,11 +365,11 @@ pval.innerText =  "Selected Text:" ;
 
 function toggleRule(obj) {
     obj.classList.toggle("selected"); //filp css style 'selected'
-    console.log($("#selectedText"));
+    //console.log($("#selectedText"));
     $("#selectedText").removeClass();
     var style = getCurrentRules().trim();
     if (style.length > 0) {
-        console.log(style);
+        //console.log(style);
         $("#selectedText").addClass(style);
     }
 }
