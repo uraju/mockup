@@ -394,7 +394,7 @@ function getCurrentRules() {
     return style;
 }
 function applyRules() {
-    var rule = {show: true};
+    var rule = {active: true, norepeat: true};
     var style = '';
     var sel = getSelectionCharOffsetsWithin();
     var selObj = window.getSelection();
