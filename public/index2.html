@@ -60,6 +60,50 @@
     .rule-hidden {
         visibility: hidden;
     }
+    * {
+    box-sizing: border-box;
+}
+.column1 {
+    float: left;
+    width: 16%;
+    padding-left: 3px;
+    padding-right: 3px;
+    border-left: 2px solid #ccc;
+    border-top: 2px solid #ccc;
+}
+.column2 {
+    float: left;
+    width: 37%;
+    padding-left: 3px;
+    padding-right: 3px;
+    border-left: 2px solid #ccc;
+    border-top: 2px solid #ccc;
+}
+.column3 {
+    float: left;
+    width: 37%;
+    padding-left: 3px;
+    padding-right: 3px;
+    border-left: 2px solid #ccc;
+    border-top: 2px solid #ccc;
+}
+.column4 {
+    float: right;
+    width: 6%;
+    padding-left: 3px;
+    padding-right: 3px;
+    border-left: 2px solid #ccc;
+    border-top: 2px solid #ccc;
+    border-right: 2px solid #ccc;
+}
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+.display-none {
+    display: none;
+}
     </style>
 </head>
 <body>
@@ -83,21 +127,42 @@
                     <div id="previewDiv"></div>
                 </td>
             </tr>
+            <tr>
+                    <td><!-- text area for source -->
+                        <div><p>Rule:</p>
+                            <textarea id="ruleFreeForm">
+    
+                            </textarea>
+                        </div>
+                    </td>
+                    <td><!-- text preview of source -->
+                        <p>Rule History: </p>
+                        <div style="display: block;"><span style="float:right;"><a href="#">Hide ALL</a> <a href="#">Delete ALL</a></span></div>
+                        <div id="ruleHistory"></div>
+                    </td>
+                </tr>            
         </table>
     </div>
-    <div id="ruleDialog">
+    <div id="ruleDialog" class="display-none">
         <div>
+            <h2>Define Rule</h2>
+            <hr />
+            <div><p>Selected Text:</p><p id="selectedText"></p></div>
+            <hr />
             <div class="icon-bar">
                 <a id="rule-bold" onclick="toggleRule(this)" href="#"><i class="fa fa-bold"></i></a> 
                 <a id="rule-italic" onclick="toggleRule(this)" href="#"><i class="fa fa-italic"></i></a> 
                 <a id="rule-underline" onclick="toggleRule(this)" href="#" ><i class="fa fa-underline"></i></a>
                 <a id="rule-para" onclick="toggleRule(this)" href="#"><strong>P</strong></a> 
                 <a id="rule-hidden" onclick="toggleRule(this)" href="#" style="border-right: 2px solid #555;"><strong>H</strong></a>
+            </div>
+            <div class="icon-bar">
                 <a onclick="applyRules(this)" class="btnrule"href="#">Apply Rule</a>
             </div>
+            
         </div>
     </div>
-    <div id="htmlSrc" style="display:none">
+    <div id="htmlSrc" class="display-none">
         <p> some more contents here</p>
         <p></p> text with no p tag
         <p>
@@ -130,32 +195,46 @@ $(document).ready(function(){
     //console.log($("#htmlSrc").html());
 
 
-$('#previewDiv').keyup(function() {
+$('#previewDiv').on('mouseup', function() {
     var obj = window.getSelection();
-    console.log(obj);
+    //console.log(obj);
     if(obj && obj.toString().trim().length > 0) {
-        console.log('in');
+        document.getElementById("selectedText").innerHTML = obj.toString();
+        //console.log('has select in');
+        //alert(obj.toString());
+        //var dlg = ;
+        //console.log(obj.toString().trim());
+        //alert(dlg);
         $('#previewDiv').avgrund({
-            width: 380, // max is 640px
-            height: 280, // max is 350px
-            showClose: false, // switch to 'true' for enabling close button
-            showCloseText: '', // type your text for close button
-            closeByEscape: true, // enables closing popup by 'Esc'..
-            closeByDocument: true, // ..and by clicking document itself
+            width: 640, // max is 640px
+            height: 350, // max is 350px
+            showClose: true, // switch to 'true' for enabling close button
+            showCloseText: 'X', // type your text for close button
+            closeByEscape: false, // enables closing popup by 'Esc'..
+            closeByDocument: false, // ..and by clicking document itself
             holderClass: '', // lets you name custom class for popin holder..
             overlayClass: '', // ..and overlay block
             enableStackAnimation: false, // another animation type
             onBlurContainer: '', // enables blur filter for specified block
             openOnEvent: true, // set to 'false' to init on load
-            setEvent: 'keyup', // use your event like 'mouseover', 'touchmove', etc.
+            //setEvent: 'mouseup', // use your event like 'mouseover', 'touchmove', etc.
             //onLoad: function (elem) { ... }, // set custom call before popin is inited..
+            onLoad: function (element) {
+                    console.log('This function will be called before dialog is initialized');
+                },
+            onUnload: function (element) {
+                    console.log('This message will be shown after dialog is closed');
+                },
             //onUnload: function (elem) { ... }, // ..and after it was closed
-            template: $("ruleDialog").html() // or function (elem) { ... }
+            template: $("#ruleDialog").html() // or function (elem) { ... }
         });
     } else {
-        console.log('out');
+        console.log(' no select');
     }
 
+});
+$('#previewDiv').off('mouseup',  function() {
+  console.log('mouseup removed ...')
 });
 });
 </script>

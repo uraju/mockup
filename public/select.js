@@ -106,11 +106,11 @@ let elm, elm1, elmStart, elmEnd, elmList=[], noOrphanTag = true, results = [], r
 if (typeof window.getSelection() != "undefined" ) {
     try {
     range = window.getSelection().getRangeAt(0);
-    console.log(range);
+    //console.log(range);
     elmStart = range.startContainer;
     elmEnd = range.endContainer;
-    console.log(elmStart);
-    console.log(elmEnd);
+    //console.log(elmStart);
+    //console.log(elmEnd);
     elmList.push(elmStart);
     if(!elmStart.isSameNode(elmEnd)) {
         elm = elmStart.nextSibling;
@@ -118,7 +118,7 @@ if (typeof window.getSelection() != "undefined" ) {
             console.log(elm);
             if (elm.hasChildNodes) {
                 elm1 = elm.childNodes[0];
-                console.log(elm1);
+                //console.log(elm1);
                 if (elm1) {
                     if (elm1.isEqualNode(elmEnd)) {
                         console.log('operlaping span')
@@ -131,8 +131,8 @@ if (typeof window.getSelection() != "undefined" ) {
         }
         elmList.push(elmEnd);
     }
-    console.log(elmList);
-    console.log('elmList.length ' + elmList.length)
+    //console.log(elmList);
+    //console.log('elmList.length ' + elmList.length)
     // compute total circle span length (circleSpansTextLength) in seleted elmList, that needs to be
     // subtracted for start offset, has issue subtracting length for last element
     if (elmList.length > 1) {
@@ -175,8 +175,8 @@ if (typeof window.getSelection() != "undefined" ) {
             doRangeOffsetSpan = true;
         }
     }
-    console.log('snippet');
-    console.log(snippet);
+    //console.log('snippet');
+    //console.log(snippet);
     //console.log(tag);
     if (tag.startsWith('<div')) {
         page = snippet;
@@ -187,17 +187,17 @@ if (typeof window.getSelection() != "undefined" ) {
         // need different alternate to stop on body or html tag
         while (!(tag.startsWith('<p') || tag.startsWith('<P')|| tag.startsWith('<body') || tag.startsWith('<BODY'))) {
             snippet = snippet.parentElement;
-            console.log(tag);
+            //console.log(tag);
             tag = snippet.outerHTML;
         }
         page = snippet.parentElement;
         tag = page.outerHTML;
-        console.log('page');
-        console.log(page);
+        //console.log('page');
+        //console.log(page);
         //console.log(tag);
         while (!(tag.startsWith('<div') || tag.startsWith('<DIV')|| tag.startsWith('<body') || tag.startsWith('<BODY'))) {
             page = page.parentElement;
-            console.log(page);
+            //console.log(page);
             tag = page.outerHTML;
         }
     }
@@ -265,7 +265,7 @@ if (typeof window.getSelection() != "undefined" ) {
     var _shift = 0;
     var _idx = 0, _tx='', _tx1='';
     let _st = offsetStart, _en = offsetEnd;
-    console.log(computedDesc);
+    //console.log(computedDesc);
     while (-1 != _end) { // TODO: change to while
         //console.log('P_END');
         _en = _st + _end;
@@ -280,7 +280,7 @@ if (typeof window.getSelection() != "undefined" ) {
         offsetEnd = offsetEnd + P_END.length;
         _tx = computedDesc.substring(0,_end);
         computedDesc = _tx + computedDesc.substring(_end + P_END.length) + _tx1;
-        console.log(computedDesc);
+        //console.log(computedDesc);
         _end = computedDesc.indexOf(P_START, _end);
         if (-1 != _end) {
             _st = offsetStart + _end + P_START.length;
@@ -289,7 +289,7 @@ if (typeof window.getSelection() != "undefined" ) {
             _tx = computedDesc.substring(0,_end);
             computedDesc = _tx + computedDesc.substring(_end + P_START.length) + _tx1;
             _en = _st + _end;
-            console.log(computedDesc);
+            //console.log(computedDesc);
             _end = computedDesc.indexOf(P_END);  //TODO: back to while loop
         }
         _idx++;
@@ -347,7 +347,7 @@ var sel = getSelectionCharOffsetsWithin();
 var pval = document.getElementById("result");
 var _txt = '';
 //console.log('selection: ');
-console.log(sel);
+//console.log(sel);
 if (sel.circularOnly) {
     _txt = "Selected Cirular only, invalid text";
 } else if (sel.text.length > 0) {
@@ -363,21 +363,33 @@ pval.innerText =  "Selected Text:" ;
 }
 
 function toggleRule(obj) {
-obj.classList.toggle("selected"); //filp css style 'selected'
+    obj.classList.toggle("selected"); //filp css style 'selected'
 }
 let ruleCount = 0;
 function getRuleId() {
     ruleCount++;
-    var ruleid = "rule00000" + ruleCount;
-    var ruleid = ruleid.substring(ruleid.length - 5);
+    var ruleid = "00000" + ruleCount;
+    ruleid = 'rule' + ruleid.substring(ruleid.length - 5);
     //console.log(ruleid);
     return ruleid;
 }
+function getCurrentRules() {
+    var style= '';
+    var list = $(".icon-bar > a.selected");
+    if(list.length > 0){
+        list.map((index, elm) => {
+            style = style + elm.id + ' ';
+            //console.log(elm.id);
+            });
+    }
+    return style;
+}
 function applyRules() {
+    var rule = {};
     var style = '';
     var sel = getSelectionCharOffsetsWithin();
     var selObj = window.getSelection();
-    console.log(sel);
+    //console.log(sel);
     var list = $(".icon-bar > a.selected");
     if(list.length > 0){
         var _htm0 = document.getElementById("previewDiv").innerHTML;
@@ -385,14 +397,42 @@ function applyRules() {
             style = style + elm.id + ' ';
             //console.log(elm.id);
             });
+        rule.id = getRuleId();
+        rule.style = style;
+        rule.text = selObj.toString();
         var sel = getSelectionCharOffsetsWithin();
         var _htm =  _htm0.substring(0, sel.start);
-        console.log(_htm);
-        _htm =  _htm + '<span id="' + getRuleId() + '" class="'+ style + '">' + _htm0.substring(sel.start, sel.end) + '</span>'
-        console.log(_htm);
+        //console.log(_htm);
+        _htm =  _htm + '<span id="' + rule.id + '" class="'+ style + '">' + _htm0.substring(sel.start, sel.end) + '</span>'
+        //console.log(_htm);
         _htm =  _htm + _htm0.substring(sel.end);
-        console.log(_htm);
+        //console.log(_htm);
         //console.log(sel);
         document.getElementById("previewDiv").innerHTML = _htm;
+        
+        var _history = document.getElementById("ruleHistory").innerHTML;
+        //console.log('_history :'+ _history.trim.length);
+        //console.log(_history);
+        var onerow = '<div class="row"><div class="column1"><p>';
+        onerow = onerow + rule.id + '</p></div><div class="column2"><p>';
+        onerow = onerow + rule.style + '</p></div><div class="column3"><p>';
+        onerow = onerow + rule.text + '</p></div><div class="column4"><p>';
+        onerow = onerow + '<a href="#">Hide</a> <a href="#">Delete</a></p></div></div>';
+        //console.log(onerow);
+        if (_history.trim().length === 0) {
+            var heading = '<div class="row">';
+            heading = heading +'<div class="column1"><h3>Rule ID</h2></div>';
+            heading = heading +'<div class="column2"><h3>Rules</h2></div>';
+            heading = heading +'<div class="column3"><h3>Selected Text</h2></div>';
+            heading = heading +'<div class="column4"><h3>Action</h2></div></div>';
+            _history = heading;
+        } 
+        _history = _history + onerow;
+        //console.log(_history);
+        document.getElementById("ruleHistory").innerHTML = _history;
     }
 }
+
+
+
+
