@@ -363,14 +363,28 @@ var pval = document.getElementById("result");
 pval.innerText =  "Selected Text:" ;
 }
 
+function formatedRules(text) {
+    if (text) {
+        // remove rule prefix
+        var _text = text.replace(/rule-/g, '');
+        // replace ' ' with ','
+        _text = _text.replace(/\s+/g, ', ');
+        //console.log(_text);
+        return _text;
+    } else {
+        return '';
+    }
+}
+function resetToolbar() {
+    $(".icon-bar > a.selected").removeClass("selected");
+}
 function toggleRule(obj) {
     obj.classList.toggle("selected"); //filp css style 'selected'
-    //console.log($("#selectedText"));
     $("#selectedText").removeClass();
-    var style = getCurrentRules().trim();
+    var style = getCurrentRules();
     if (style.length > 0) {
-        //console.log(style);
         $("#selectedText").addClass(style);
+        document.getElementById("selectedRules").innerText = formatedRules(style);
     }
 }
 let ruleCount = 0;
@@ -388,8 +402,7 @@ function getCurrentRules() {
     if(list.length > 0){
         list.map((index, elm) => {
             style = style + elm.id + ' ';
-            //console.log(elm.id);
-            });
+        });
     }
     return style.trim();
 }
@@ -401,16 +414,12 @@ function applyRules() {
     var rule = {active: true, norepeat: true};
     var style = getCurrentRules();
     //console.log(sel);
-    var list = $(".icon-bar > a.selected");
+    
     if(style.length > 0){
         var _htm0 = document.getElementById("previewDiv").innerHTML;
         rule.id = getRuleId();
         rule.style = style;
-        var _style = style.replace(/rule-/g, '');
-        //console.log(_style);
-        _style = _style.replace(/\s+/g, ', ');
-        //console.log('COMMA added rule: ' + _style);
-        rule.style_text = _style;
+        rule.style_text = formatedRules(style)
         rule.text = selObj.toString();
         var sel = getSelectionCharOffsetsWithin();
         rule.extended = sel;//may be limit to start and end?
@@ -434,7 +443,7 @@ function applyRules() {
             _history = _history + '<th>Actions</th></tr></thead><tbody>';
             rules.map((elm, index) => {
                 aid = 'showhide_' + elm.id;
-                console.log(aid);
+                // console.log(aid);
                 _history = _history + '<tr><td>' + elm.style_text + '</td><td>';
                 _history = _history + elm.text + '</td><td>';
                 _history = _history + '<a id="' + aid + '" href="#" onClick="showHideRule(';
@@ -446,22 +455,36 @@ function applyRules() {
         // //console.log(_history);
         document.getElementById("ruleDocument").innerHTML = _history;
         //avgrund.deactivate();
+        // reset toolbar
+        resetToolbar();
     }
 }
+function getHistorySpanId(text) {
+    if (!text) return '';
+    if(typeof text === 'object'){
+        var lst = text.classList;
+        console.log(lst); // use this to read class names
+        return text.id;
+    }
 
+    // if(text.startsWith('<span') || text.length > 18) {
+    //     text = text.substring(9,18);
+    //     console.log(text);
+    // }
+    return text;
+}
 function showHideRule(id) {
     console.log('showHideRule');
-    console.log(id);
+    console.log(getHistorySpanId(id));
     var elm = document.getElementById('showhide_' + id);
     console.log(elm);
     if (elm) {
         elm.innerText = 'Show';
     }
 }
-
 function removeRule(id) {
     console.log('removeRule');
-    console.log(id);
+    console.log(getHistorySpanId(id));
 }
 function editRule(id) { //not used now
     console.log('editRule');

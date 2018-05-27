@@ -82,6 +82,9 @@ body {margin:0;}
     text-decoration-line: underline;
     text-decoration-style: solid;
 }
+.rule-uppercase {
+    text-transform: uppercase;
+}
 .rule-para {
     content: '\A';
     white-space: pre;
