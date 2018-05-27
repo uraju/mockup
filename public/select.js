@@ -391,64 +391,92 @@ function getCurrentRules() {
             //console.log(elm.id);
             });
     }
-    return style;
+    return style.trim();
 }
 function applyRules() {
-    var rule = {active: true, norepeat: true};
-    var style = '';
-    var sel = getSelectionCharOffsetsWithin();
     var selObj = window.getSelection();
+    if(!(selObj && selObj.toString().trim().length > 0)) {
+        return;
+    }
+    var rule = {active: true, norepeat: true};
+    var style = getCurrentRules();
     //console.log(sel);
     var list = $(".icon-bar > a.selected");
-    if(list.length > 0){
+    if(style.length > 0){
         var _htm0 = document.getElementById("previewDiv").innerHTML;
-        list.map((index, elm) => {
-            style = style + elm.id + ' ';
-            //console.log(elm.id);
-            });
         rule.id = getRuleId();
         rule.style = style;
+        var _style = style.replace(/rule-/g, '');
+        //console.log(_style);
+        _style = _style.replace(/\s+/g, ', ');
+        //console.log('COMMA added rule: ' + _style);
+        rule.style_text = _style;
         rule.text = selObj.toString();
         var sel = getSelectionCharOffsetsWithin();
         rule.extended = sel;//may be limit to start and end?
         rules.push(rule); //store in global variable for later use
         //console.log(rules);
         var _htm =  _htm0.substring(0, sel.start);
-        //console.log(_htm);
         _htm =  _htm + '<span id="' + rule.id + '" class="'+ style + '">' + _htm0.substring(sel.start, sel.end) + '</span>'
-        //console.log(_htm);
         _htm =  _htm + _htm0.substring(sel.end);
-        //console.log(_htm);
-        //console.log(sel);
         document.getElementById("previewDiv").innerHTML = _htm;
         // update rule history table
-        var _history = document.getElementById("ruleHistory").innerHTML;
-        //console.log('_history :'+ _history.trim.length);
-        //console.log(_history);
-        var onerow = '<div class="row"><div class="column1"><p>';
-        onerow = onerow + rule.id + '</p></div><div class="column2"><p>';
-        onerow = onerow + rule.style + '</p></div><div class="column3"><p>';
-        onerow = onerow + rule.text + '</p></div><div class="column4"><p>';
-        onerow = onerow + '<a href="#">Hide</a> <a href="#">Delete</a></p></div></div>';
-        //console.log(onerow);
-        if (_history.trim().length === 0) {
-            var heading = '<div style="width: 100%;">'
-            heading = heading + '<span style="float:right;"><a href="#">Show Rules</a> / '
-            heading = heading + '<a href="#">Hide All</a> / '
-            heading = heading + '<a href="#">Delete All</a></span><hr /></div>'
-            heading = heading + '<div class="row">';
-            heading = heading + '<div class="column1"><h3>Rule ID</h2></div>';
-            heading = heading + '<div class="column2"><h3>Rules</h2></div>';
-            heading = heading + '<div class="column3"><h3>Selected Text</h2></div>';
-            heading = heading + '<div class="column4"><h3>Action</h2></div></div>';
-            _history = heading;
-        } 
-        _history = _history + onerow;
-        //console.log(_history);
+        var _history = '';
+        var aid;
+        if(rules.length > 0) { // may be convert text link to icons
+            _history = '<div style="width: 100%;">'
+            _history = _history + '<span style="float:right;">';
+            _history = _history + '<a href="#" onClick="displayRules()">Display Rules</a> | '
+            _history = _history + '<a href="#" onClick="showAllRules()">Show All</a> | '
+            _history = _history + '<a href="#" onClick="hideAllRules()">Hide All</a> | '
+            _history = _history + '<a href="#" onClick="removeAllRules()">Delete All</a></span><hr /></div>'           
+            _history = _history + '<table id="history"><thead><tr><th>Rules</th><th>Selected Text</th>';
+            _history = _history + '<th>Actions</th></tr></thead><tbody>';
+            rules.map((elm, index) => {
+                aid = 'showhide_' + elm.id;
+                console.log(aid);
+                _history = _history + '<tr><td>' + elm.style_text + '</td><td>';
+                _history = _history + elm.text + '</td><td>';
+                _history = _history + '<a id="' + aid + '" href="#" onClick="showHideRule(';
+                _history = _history + elm.id +')">Hide</a> | <a href="#" onClick=';
+                _history = _history +'"removeRule(' + elm.id +')">Remove</td></tr>';
+            });
+            _history = _history + '</tbody></table>';
+        }
+        // //console.log(_history);
         document.getElementById("ruleHistory").innerHTML = _history;
+        //avgrund.deactivate();
     }
 }
 
+function showHideRule(id) {
+    console.log('showHideRule');
+    console.log(id);
+    var elm = document.getElementById('showhide_' + id);
+    console.log(elm);
+    if (elm) {
+        elm.innerText = 'Show';
+    }
+}
 
+function removeRule(id) {
+    console.log('removeRule');
+    console.log(id);
+}
+function editRule(id) { //not used now
+    console.log('editRule');
+    console.log(id);
+}
 
-
+function hideAllRules() {
+    console.log('hideAllRules');
+}
+function showAllRules() {
+    console.log('showAllRules');
+}
+function removeAllRules() {
+    console.log('removeAllRule');
+}
+function displayRules() { // mehod to display 'rules' as formated json data
+    console.log('DisplayRules');
+}
