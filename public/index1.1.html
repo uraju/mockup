@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.css"></link>
+    <link rel="stylesheet" href="style/avgrund.css"></link>
+    <link rel="stylesheet" href="style/rules.css"></link>
+</head>
+<body>
+<h3 id="result" unselectable="on" >Selected Text:</h3>
+<br />
+<input type="button" onclick="printSelection()" unselectable="on" value="Get selection offset">
+<input type="button" onclick="clearSelection()" unselectable="on" value="Reset results">
+<div id="main">
+    <div id="contents">
+        <table>
+            <tr>
+                <td><!-- text area for source -->
+                    <div><p>Document Source:</p>
+                        <textarea id="docSrc">
+
+                        </textarea>
+                    </div>
+                </td>
+                <td><!-- text preview of source -->
+                    <div><span>Preview:</span></div>
+                    <div id="previewDiv"></div>
+                </td>
+            </tr>
+            <tr>
+                    <td><!-- text area for source -->
+                        <div><p>Rule:</p>
+                            <textarea id="ruleFreeForm">
+    
+                            </textarea>
+                        </div>
+                    </td>
+                    <td><!-- text preview of source -->
+                        <div>
+                            <p>Rule History: </p>
+                            <div id="ruleHistory"></div>
+                        </div>
+                    </td>
+                </tr>            
+        </table>
+    </div>
+    <div id="ruleDialog" class="display-none">
+        <div>
+            <h2>Define Rule</h2>
+            <hr />
+            <div><p>Selected Text:</p><p id="selectedText"></p></div>
+            <div class="icon-bar">
+                <a id="rule-bold" onclick="toggleRule(this)" href="#">B</a> 
+                <a id="rule-italic" onclick="toggleRule(this)" href="#">I</a> 
+                <a id="rule-underline" onclick="toggleRule(this)" href="#" >U</a>
+                <a id="rule-para" onclick="toggleRule(this)" href="#">P</a> 
+                <a id="rule-para" onclick="toggleRule(this)" href="#">a->A</a> 
+                <a id="rule-hidden" onclick="toggleRule(this)" href="#">H</a>
+            </div>
+            <div>
+                <input type="checkbox" id="apply-to-full-doc" name="apply-to-full-doc" value="apply-full">
+                <label for="subscribeNews">Apply above rules to all occurences of 'selected text' in the document?</label>
+                <h4>Global Rules:</h4>
+                <input type="checkbox" id="select-all-caps" name="select-all-caps" value="select-all-caps">
+                <label for="subscribeNews">Select all caps words?</label><br/>
+                <input type="checkbox" id="select-all-phone" name="select-all-phone" value="select-all-phone">
+                <label for="subscribeNews">Select all phone(s)?</label><br/>
+                <input type="checkbox" id="select-all-name" name="select-all-name" value="select-all-name">
+                <label for="subscribeNews">Select all name/address?</label>
+                <hr/>
+                <a onclick="applyRules(this)" class="btnrule"href="#">Apply Rule</a>
+            </div>
+        </div>
+    </div>
+    <div id="htmlSrc" class="display-none">
+        <p> some more contents here</p>
+        <p></p> text with no p tag
+        <p>
+        <p>Do you see any <span class="ui grey label">Teletubbies in here? Do you see a slender <span class="ui red circular label">2</span></span> plastic tag clipped to my shirt with my name printed on it? Do you see a little Asian child with a blank <span class="ui green label">expression on his face sitting outside on a mechanical helicopter<span class="ui red circular label">3</span></span> that shakes when you put quarters in it? No? Well, that's what you see at a toy store. And you must think you're in a toy store, because you're here shopping for an infant named Jeb. </p>
+        
+        <p>So, <span>you cold?</span></p>
+        <p>The path of the righteous man is beset on all sides by the iniquities of the selfish and the tyranny of evil men. Blessed is he who, in the name of charity and good will, shepherds the weak through the valley of darkness, for he is truly his brother's keeper and the finder of lost children. And I will strike down upon thee with great vengeance and furious anger those who would attempt to poison and destroy My brothers. And you will know My name is the Lord when I lay My vengeance upon thee. </p>
+        
+        <p>I'm serious as a heart attack</p>
+        <p>Do you see any Teletubbies in here? Do you see a slender plastic tag clipped to my shirt with my name printed on it? Do you see a little Asian child with a blank expression on his face sitting outside on a mechanical helicopter that shakes when you put quarters in it? No? Well, that's what you see at a toy store. And you must think you're in a toy store, because you're here shopping for an infant named Jeb. </p>
+        
+        <p>Is she dead, yes or no?</p>
+        <p>Like you, I used to think the world was this great place where everybody lived by the same standards I did, then some kid with a nail showed me I was living in his world, a world where chaos rules not order, a world where righteousness is not rewarded. That's Cesar's world, and if you're not willing to play by his rules, then you're gonna have to pay the price. </p>
+        
+        <p>Is she dead, yes or no?</p>
+        <p>Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends. </p>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="jquery.avgrund.min.js"></script>
+<script src="select.js"></script>
+<script>
+$(document).ready(function(){
+    document.getElementById("previewDiv").innerHTML = $("#htmlSrc").html();
+    document.getElementById("docSrc").value =  $("#htmlSrc").html();
+
+    $('#previewDiv').on('mouseup', function() {
+    var obj = window.getSelection();
+    if(obj && obj.toString().trim().length > 0) {
+        document.getElementById("selectedText").innerHTML = obj.toString();
+        $('#previewDiv').avgrund({
+            width: 640, // max is 640px
+            height: 350, // max is 350px
+            showClose: true, // switch to 'true' for enabling close button
+            showCloseText: 'X', // type your text for close button
+            closeByEscape: false, // enables closing popup by 'Esc'..
+            closeByDocument: false, // ..and by clicking document itself
+            holderClass: '', // lets you name custom class for popin holder..
+            overlayClass: '', // ..and overlay block
+            enableStackAnimation: false, // another animation type
+            onBlurContainer: '', // enables blur filter for specified block
+            openOnEvent: true, // set to 'false' to init on load
+            //setEvent: 'mouseup', // use your event like 'mouseover', 'touchmove', etc.
+            //onLoad: function (elem) { ... }, // set custom call before popin is inited..
+            onLoad: function (element) {
+                    //triggers
+                    //console.log('This function will be called before dialog is initialized');
+                },
+            onUnload: function (element) {
+                    //triggers
+                    //console.log('This message will be shown after dialog is closed');
+                },
+            //onUnload: function (elem) { ... }, // ..and after it was closed
+            template: $("#ruleDialog").html() // or function (elem) { ... }
+        });
+    } else {
+        console.log(' no select');
+    }
+
+});
+$('#previewDiv').off('mouseup',  function() {
+  console.log('mouseup removed ...')
+});
+});
+</script>
+</body>
+</html>
