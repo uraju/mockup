@@ -429,7 +429,7 @@ function applyRules() {
             _history = _history + '<a href="#" onClick="displayRules()">Display Rules</a> | '
             _history = _history + '<a href="#" onClick="showAllRules()">Show All</a> | '
             _history = _history + '<a href="#" onClick="hideAllRules()">Hide All</a> | '
-            _history = _history + '<a href="#" onClick="removeAllRules()">Delete All</a></span></div>'           
+            _history = _history + '<a href="#" onClick="removeAllRules()">Delete All</a></span><hr /></div>'           
             _history = _history + '<table id="history"><thead><tr><th>Rules</th><th>Selected Text</th>';
             _history = _history + '<th>Actions</th></tr></thead><tbody>';
             rules.map((elm, index) => {
@@ -444,7 +444,7 @@ function applyRules() {
             _history = _history + '</tbody></table>';
         }
         // //console.log(_history);
-        document.getElementById("ruleDocument").innerHTML = _history;
+        document.getElementById("ruleHistory").innerHTML = _history;
         //avgrund.deactivate();
     }
 }

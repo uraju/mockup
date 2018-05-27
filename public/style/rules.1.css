@@ -1,37 +1,12 @@
 body {margin:0;}
-
-#search-bar{
-  display:flex;
-  margin:1px;
-  height: 25px;
-}
-#search-bar > p {
-    flex: 80px 0 0;
-}
-#search-bar > div {
-    flex-grow: 1;
-}
-#preview{
-  display:flex;
-  margin:2px;
-  border: 1px solid #ddd;
-  height: 310px;
-}
-  
-#previewDiv{
-  flex-grow: 1;
-}
-  
-  #icons-v{
-    flex: 50px 0 0;
-    background-color: #bbb;
-  }
 .icon-bar {
-    width: 60px;
+    width: 100%;
+    background-color: #bbb;
+    overflow: auto;
 }
 .icon-bar a {
     float: left;
-    width: 100%;
+    width: 45px;
     text-align: center;
     padding: 10px 0;
     transition: all 0.3s ease;
@@ -41,7 +16,7 @@ body {margin:0;}
     border: 1px solid #555;
 }
 .icon-bar a:not(:last-child) {
-    border-bottom: none; /* Prevent double borders */
+    border-right: none; /* Prevent double borders */
 }
 .icon-bar a:hover {
     background-color: #000 !important;
@@ -49,19 +24,18 @@ body {margin:0;}
 .icon-bar a.btnspace {
     width:15px;
 }
-.btnrule {
-    width: auto;
+a.btnrule {
+    width:90px;
     text-align: center;
-    padding-right: 3px;
-    padding-left: 3px;
+    padding: 6px;
     transition: all 0.3s ease;
     font-size: 16px;
     font-weight: bold;
     color: #fff;
     border: 1px solid #555;
     background-color: #ccc;
-    margin-right: 3px;
-    margin-left: 3px;
+    margin-top: 3px;
+    margin-bottom: 3px;
 }
 .icon-bar a.selected {
     background-color: #555;
@@ -89,11 +63,51 @@ body {margin:0;}
 .rule-hidden {
     visibility: hidden;
 }
-
+* {
+box-sizing: border-box;
+}
+.column1 {
+float: left;
+width: 6%;
+padding-left: 3px;
+padding-right: 3px;
+border-left: 2px solid #ccc;
+border-top: 2px solid #ccc;
+display: none; /* hide now, use for sequence number, if necessary */
+}
+.column2 {
+float: left;
+width: 37%;
+padding-left: 3px;
+padding-right: 3px;
+border-left: 2px solid #ccc;
+border-top: 2px solid #ccc;
+}
+.column3 {
+float: left;
+width: 37%;
+padding-left: 3px;
+padding-right: 3px;
+border-left: 2px solid #ccc;
+border-top: 2px solid #ccc;
+}
+.column4 {
+float: right;
+width: 16%;
+padding-left: 3px;
+padding-right: 3px;
+border-left: 2px solid #ccc;
+border-top: 2px solid #ccc;
+border-right: 2px solid #ccc;
+}
+.row:after {
+content: "";
+display: table;
+clear: both;
+}
 .display-none {
 display: none;
 }
-
 #selectedText {
 padding-bottom: 10px;
 }

@@ -17,59 +17,58 @@
                 <td><!-- text area for source -->
                     <div><p>Document Source:</p>
                         <textarea id="docSrc">
+
                         </textarea>
                     </div>
                 </td>
                 <td><!-- text preview of source -->
-                    <div id="search-bar"><p>Preview:</p><div>
-                            <input type="search" id="mySearch" name="q">
-                            <button class="btnrule">Find</button>
-                            <input type="checkbox" id="apply-to-full-doc" name="apply-to-full-doc" value="apply-full">
-                            <label for="apply-to-full-doc">Find all occurences</label>
-                            <button onclick="applyRules(this)" class="btnrule" >Create Rule</button>
-                          </div>
-                    </div>
-                    <div id="preview">
-                        <div id="previewDiv"></div>
-                        <div id="icons-v" class="icon-bar">
-                            <a id="rule-bold" onclick="toggleRule(this)" href="#">B</a> 
-                            <a id="rule-italic" onclick="toggleRule(this)" href="#">I</a> 
-                            <a id="rule-underline" onclick="toggleRule(this)" href="#" >U</a>
-                            <a id="rule-para" onclick="toggleRule(this)" href="#">P</a> 
-                            <a id="rule-para" onclick="toggleRule(this)" href="#">a->A</a> 
-                            <a id="rule-hidden" onclick="toggleRule(this)" href="#">H</a>
-                        </div>
-                    </div>
-                    <div id="rules-def">
-                        <div>
-                            <input type="checkbox" id="save-user-rule" name="save-user-rule" value="save-user-rule">
-                            <label for="save-user-rule">Save as my rule</label>
-                        </div>
-                    </div>
+                    <div><span>Preview:</span></div>
+                    <div id="previewDiv"></div>
                 </td>
             </tr>
             <tr>
-                <td><!-- text area for source -->
-                    <div><p>Rule:</p>
-                        <textarea id="ruleFreeForm">
-                        </textarea>
-                    </div>
-                </td>
-                <td><!-- text preview of source -->
-                    <div>
-                        <p>Document Rules: </p>
-                        <div id="ruleDocument"></div>
-                        <p style="padding-top: 10px">User Rules: </p>
-                        <div id="ruleUsers" style="padding-bottom: 15px"></div>
-                    </div>
-                </td>
-            </tr>            
+                    <td><!-- text area for source -->
+                        <div><p>Rule:</p>
+                            <textarea id="ruleFreeForm">
+    
+                            </textarea>
+                        </div>
+                    </td>
+                    <td><!-- text preview of source -->
+                        <div>
+                            <p>Rule History: </p>
+                            <div id="ruleHistory"></div>
+                        </div>
+                    </td>
+                </tr>            
         </table>
     </div>
     <div id="ruleDialog" class="display-none">
         <div>
             <h2>Define Rule</h2>
-            
+            <hr />
+            <div><p>Selected Text:</p><p id="selectedText"></p></div>
+            <div class="icon-bar">
+                <a id="rule-bold" onclick="toggleRule(this)" href="#">B</a> 
+                <a id="rule-italic" onclick="toggleRule(this)" href="#">I</a> 
+                <a id="rule-underline" onclick="toggleRule(this)" href="#" >U</a>
+                <a id="rule-para" onclick="toggleRule(this)" href="#">P</a> 
+                <a id="rule-para" onclick="toggleRule(this)" href="#">a->A</a> 
+                <a id="rule-hidden" onclick="toggleRule(this)" href="#">H</a>
+            </div>
+            <div>
+                <input type="checkbox" id="apply-to-full-doc" name="apply-to-full-doc" value="apply-full">
+                <label for="subscribeNews">Apply above rules to all occurences of 'selected text' in the document?</label>
+                <h4>Global Rules:</h4>
+                <input type="checkbox" id="select-all-caps" name="select-all-caps" value="select-all-caps">
+                <label for="subscribeNews">Select all caps words?</label><br/>
+                <input type="checkbox" id="select-all-phone" name="select-all-phone" value="select-all-phone">
+                <label for="subscribeNews">Select all phone(s)?</label><br/>
+                <input type="checkbox" id="select-all-name" name="select-all-name" value="select-all-name">
+                <label for="subscribeNews">Select all name/address?</label>
+                <hr/>
+                <a onclick="applyRules(this)" class="btnrule"href="#">Apply Rule</a>
+            </div>
         </div>
     </div>
     <div id="htmlSrc" class="display-none">
