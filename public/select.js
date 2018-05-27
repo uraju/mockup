@@ -494,12 +494,40 @@ function editRule(id) { //not used now
 
 function hideAllRules() {
     console.log('hideAllRules');
+    if(rules.length > 0) {
+        rules.map((obj) =>{
+            var elm = document.getElementById('showhide_' + obj.id);
+            //console.log(elm);
+            // set active flag to false
+            if (elm) {
+                elm.innerText = 'Show';
+            }
+        });
+    }
 }
 function showAllRules() {
     console.log('showAllRules');
+    if(rules.length > 0) {
+        rules.map((obj) =>{
+            var elm = document.getElementById('showhide_' + obj.id);
+            //console.log(elm);
+            // set active flag to true
+            if (elm) {
+                elm.innerText = 'Hide';
+            }
+        });
+    }
 }
 function removeAllRules() {
     console.log('removeAllRule');
+    if(rules.length > 0) {
+        // find span by id and remove them
+        // empty rules array object
+        rules.map((obj) =>{
+            var elm = document.getElementById('showhide_' + obj.id);
+            //console.log(elm);
+        });
+    }
 }
 function displayRules() { // mehod to display 'rules' as formated json data
     console.log('DisplayRules');
