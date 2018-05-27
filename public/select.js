@@ -454,41 +454,42 @@ function applyRules() {
         }
         // //console.log(_history);
         document.getElementById("ruleDocument").innerHTML = _history;
-        //avgrund.deactivate();
         // reset toolbar
         resetToolbar();
+        $("#rules-def, #icons-v, #create-rule").addClass('display-none');
     }
 }
 function getHistorySpanId(text) {
     if (!text) return '';
     if(typeof text === 'object'){
-        var lst = text.classList;
-        console.log(lst); // use this to read class names
+        //var lst = text.classList;
+        //console.log(lst); // use this to read class names
         return text.id;
     }
-
-    // if(text.startsWith('<span') || text.length > 18) {
-    //     text = text.substring(9,18);
-    //     console.log(text);
-    // }
     return text;
 }
 function showHideRule(id) {
     console.log('showHideRule');
-    console.log(getHistorySpanId(id));
-    var elm = document.getElementById('showhide_' + id);
+    var _id = getHistorySpanId(id);
+    console.log(_id);
+    var elm = document.getElementById('showhide_' + _id);
     console.log(elm);
     if (elm) {
-        elm.innerText = 'Show';
+        if (elm.innerText === 'Show')
+          elm.innerText = 'Hide';
+        else
+          elm.innerText = 'Show';
     }
 }
 function removeRule(id) {
     console.log('removeRule');
-    console.log(getHistorySpanId(id));
+    var _id = getHistorySpanId(id);
+    console.log(_id);
 }
 function editRule(id) { //not used now
     console.log('editRule');
-    console.log(id);
+    var _id = getHistorySpanId(id);
+    console.log(_id);
 }
 
 function hideAllRules() {

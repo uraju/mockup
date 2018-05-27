@@ -26,12 +26,12 @@
                             <button class="btnrule">Find</button>
                             <input type="checkbox" id="apply-to-full-doc" name="apply-to-full-doc" value="apply-full">
                             <label for="apply-to-full-doc">Find all occurences</label>
-                            <button onclick="applyRules(this)" class="btnrule" >Create Rule</button>
+                            <button id="create-rule" onclick="applyRules(this)" class="btnrule display-none" >Create Rule</button>
                           </div>
                     </div>
                     <div id="preview">
                         <div id="previewDiv"></div>
-                        <div id="icons-v" class="icon-bar">
+                        <div id="icons-v" class="icon-bar display-none">
                             <a id="rule-bold" onclick="toggleRule(this)" href="#">B</a> 
                             <a id="rule-italic" onclick="toggleRule(this)" href="#">I</a> 
                             <a id="rule-underline" onclick="toggleRule(this)" href="#" >U</a>
@@ -40,7 +40,7 @@
                             <a id="rule-hidden" onclick="toggleRule(this)" href="#">H</a>
                         </div>
                     </div>
-                    <div id="rules-def">
+                    <div id="rules-def" class="display-none">
                         <div>
                             <p>Selected rules: <strong> <span id="selectedRules"></span></strong></p>
                             <p>Selected text: <span id="selectedText"></span></p>
@@ -106,6 +106,8 @@ $(document).ready(function(){
     var obj = window.getSelection();
     if(obj && obj.toString().trim().length > 0) {
       document.getElementById("selectedText").innerText = obj.toString();
+      $("#rules-def, #icons-v, #create-rule").removeClass('display-none');
+      //$("#create-rule").addClass("btnrule")
     } else {
       console.log(' no select');
     }
