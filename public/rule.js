@@ -460,6 +460,9 @@ function applyRules() {
         var _html = $("#htmlSrc").html();
         _html = ruleHtmlInsertAll(_html, currentrules);
         document.getElementById("previewDiv").innerHTML = _html;
+        document.getElementById("selectedText").innerHTML = "";
+        document.getElementById("selectedRules").innerHTML = "";
+        $("#selectedRules").removeClass();
     }
 }
 function getHistorySpanId(text) {
@@ -478,10 +481,14 @@ function showHideRule(id) {
     var elm = document.getElementById('showhide_' + _id);
     console.log(elm);
     if (elm) {
-        if (elm.innerText === 'Show')
+        if (elm.innerText === 'Show'){
           elm.innerText = 'Hide';
-        else
+          $('#'+ obj.id).removeClass('display-none');
+        }
+        else {
           elm.innerText = 'Show';
+          $('#'+ obj.id).addClass('display-none');
+        }
     }
 }
 function removeRule(id) {
@@ -500,6 +507,7 @@ function hideAllRules() {
     if(currentrules.length > 0) {
         currentrules.map((obj) =>{
             var elm = document.getElementById('showhide_' + obj.id);
+            $('#'+ obj.id).removeClass('display-none');
             //console.log(elm);
             // set active flag to false
             if (elm) {
