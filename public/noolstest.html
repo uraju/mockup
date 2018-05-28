@@ -9,13 +9,11 @@
         value: ''
     }
     define Message {
-        message : "",
-        id:'',
-        rules: '',
-        constructor : function (message,id,rules) {
-            this.text = message;
-            this.id = id;
-            this.rules = rules;   
+       obj:{},
+        constructor : function (obj) {
+            this.text = obj.message;
+            this.id = obj.id;
+            this.rules = obj.rules;   
             this.html = '';
         }        
 
@@ -31,7 +29,7 @@
                 this.html = formatSpan(this.id, this.rules, this.text);
             });
             
-            document.getElementById("output").innerHTML +=  m.html ;
+            
         }
     }
     
@@ -59,12 +57,15 @@
     function init() {
        //get the source
        var source = document.getElementById("simple").innerHTML;
+       
              
        //console.log(source);
        //compile the source. The name option is required if compiling directly.
+       var obj = {message:'hello world',id:'rule00001',rules:'bold, italic'};
        var flow = nools.compile(source, {name: "simple"}),
-            Message = flow.getDefined("message"),
-            session = flow.getSession(m = new Message('hello world','rule00001','underline, bold, italic'));
+            Message = flow.getDefined("message");
+            var m = new Message(obj);
+           var session = flow.getSession(m);
             //console.log(flow)
       
         //assert your different messages
@@ -82,14 +83,17 @@
             if(err){
                 console.error(err);
             } else {
-                console.log(m.html);
-            }
+               
+            };
          });
         //console.log(session.assert(new Message("Hello")));
         //console.log(session.assert(new Message("Uma")));
         //console.log(source);
+        console.log(m.html);
+        return m.html;
     }
-    init();   
+    var str = init();
+    document.getElementById("output").innerHTML +=  str ;   
 </script>
 </body>
 </html>
