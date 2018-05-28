@@ -31,13 +31,12 @@
             url: "./rule.nools"
         }).then(function (res) {
             var source = res;
-            var obj = {text:'hello world',id:'rule00001',rules:'bold'};
-            var flow = nools.compile(source, {name: "simple"}),
-            Message = flow.getDefined("message");
-            var m = new Message(obj);
+            var obj = {text:'hello world',id:'rule00001',rules:'bold,italic'};
+            var flow = nools.compile(source, {name: "select"}),
+            Selection = flow.getDefined("selection");
+            var m = new Selection(obj);
             var session = flow.getSession(m);
-           // flow = nools.compile(source, {name: "conways2d", define: {Cell: Cell}, scope: { loop: loop}});
-           session.match(function(err){
+            session.match(function(err){
             if(err){
                 console.error(err);
             } else {

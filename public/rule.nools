@@ -1,4 +1,4 @@
-define Message {
+define Selection {
     obj:{},
     constructor : function (obj) {
         this.text = obj.text;
@@ -11,7 +11,7 @@ define Message {
 rule Hello {
     
     when {           
-        m : Message m.text =~ /^hello\sworld$/
+        m : Selection m.text =~ /^hello\sworld$/
     }
     then {
         modify(m, function(){              
