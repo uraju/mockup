@@ -210,7 +210,7 @@ if (typeof window.getSelection() != "undefined" ) {
     priorRange = range.cloneRange();
     priorRange.selectNodeContents(page);
     priorRange.setEnd(range.startContainer, range.startOffset);
-    start = priorRange.toString().length;
+    start = priorRange.toString().length + 3;
     end = start + range.toString().length;
     text = range.toString();
     rangeOffset = range.startOffset;
@@ -388,7 +388,7 @@ function toggleRule(obj) {
     }
 }
 let ruleCount = 0;
-let rules = [];
+let currentrules = [];
 function getRuleId() {
     ruleCount++;
     var ruleid = "00000" + ruleCount;
@@ -416,23 +416,23 @@ function applyRules() {
     //console.log(sel);
     
     if(style.length > 0){
-        var _htm0 = document.getElementById("previewDiv").innerHTML;
+        //var _htm0 = document.getElementById("previewDiv").innerHTML;
         rule.id = getRuleId();
-        rule.style = style;
-        rule.style_text = formatedRules(style)
+        rule.rules = formatedRules(style)
         rule.text = selObj.toString();
         var sel = getSelectionCharOffsetsWithin();
-        rule.extended = sel;//may be limit to start and end?
-        rules.push(rule); //store in global variable for later use
-        console.log(rules);
-        var _htm =  _htm0.substring(0, sel.start);
-        _htm =  _htm + '<span id="' + rule.id + '" class="'+ style + '">' + _htm0.substring(sel.start, sel.end) + '</span>'
-        _htm =  _htm + _htm0.substring(sel.end);
-        document.getElementById("previewDiv").innerHTML = _htm;
+        rule.start = sel.start;//may be limit to start and end?
+        rule.end = sel.end; 
+        currentrules.push(rule); //store in global variable for later use
+        console.log(currentrules);
+       // var _htm =  _htm0.substring(0, sel.start);
+       // _htm =  _htm + '<span id="' + rule.id + '" class="'+ style + '">' + _htm0.substring(sel.start, sel.end) + '</span>'
+       // _htm =  _htm + _htm0.substring(sel.end);
+       // document.getElementById("previewDiv").innerHTML = _htm;
         // update rule history table
         var _history = '';
         var aid;
-        if(rules.length > 0) { // may be convert text link to icons
+        if(currentrules.length > 0) { // may be convert text link to icons
             _history = '<div style="width: 100%;">'
             _history = _history + '<span style="float:right;">';
             _history = _history + '<a href="#" onClick="displayRules()">Display Rules</a> | '
@@ -441,10 +441,10 @@ function applyRules() {
             _history = _history + '<a href="#" onClick="removeAllRules()">Delete All</a></span></div>'           
             _history = _history + '<table id="history"><thead><tr><th>Rules</th><th>Selected Text</th>';
             _history = _history + '<th>Actions</th></tr></thead><tbody>';
-            rules.map((elm, index) => {
+            currentrules.map((elm, index) => {
                 aid = 'showhide_' + elm.id;
                 // console.log(aid);
-                _history = _history + '<tr><td>' + elm.style_text + '</td><td>';
+                _history = _history + '<tr><td>' + elm.rules + '</td><td>';
                 _history = _history + elm.text + '</td><td>';
                 _history = _history + '<a id="' + aid + '" href="#" onClick="showHideRule(';
                 _history = _history + elm.id +')">Hide</a> | <a href="#" onClick=';
@@ -457,6 +457,12 @@ function applyRules() {
         // reset toolbar
         resetToolbar();
         $("#rules-def, #icons-v, #create-rule").addClass('display-none');
+        var _html = $("#htmlSrc").html();
+        _html = ruleHtmlInsertAll(_html, currentrules);
+        document.getElementById("previewDiv").innerHTML = _html;
+        document.getElementById("selectedText").innerHTML = "";
+        document.getElementById("selectedRules").innerHTML = "";
+        $("#selectedRules").removeClass();
     }
 }
 function getHistorySpanId(text) {
@@ -475,10 +481,14 @@ function showHideRule(id) {
     var elm = document.getElementById('showhide_' + _id);
     console.log(elm);
     if (elm) {
-        if (elm.innerText === 'Show')
+        if (elm.innerText === 'Show'){
           elm.innerText = 'Hide';
-        else
+          $('#'+ obj.id).removeClass('display-none');
+        }
+        else {
           elm.innerText = 'Show';
+          $('#'+ obj.id).addClass('display-none');
+        }
     }
 }
 function removeRule(id) {
@@ -494,9 +504,10 @@ function editRule(id) { //not used now
 
 function hideAllRules() {
     console.log('hideAllRules');
-    if(rules.length > 0) {
-        rules.map((obj) =>{
+    if(currentrules.length > 0) {
+        currentrules.map((obj) =>{
             var elm = document.getElementById('showhide_' + obj.id);
+            $('#'+ obj.id).removeClass('display-none');
             //console.log(elm);
             // set active flag to false
             if (elm) {
@@ -507,8 +518,8 @@ function hideAllRules() {
 }
 function showAllRules() {
     console.log('showAllRules');
-    if(rules.length > 0) {
-        rules.map((obj) =>{
+    if(currentrules.length > 0) {
+        currentrules.map((obj) =>{
             var elm = document.getElementById('showhide_' + obj.id);
             //console.log(elm);
             // set active flag to true
@@ -520,10 +531,10 @@ function showAllRules() {
 }
 function removeAllRules() {
     console.log('removeAllRule');
-    if(rules.length > 0) {
+    if(currentrules.length > 0) {
         // find span by id and remove them
         // empty rules array object
-        rules.map((obj) =>{
+        currentrules.map((obj) =>{
             var elm = document.getElementById('showhide_' + obj.id);
             //console.log(elm);
         });
@@ -531,4 +542,66 @@ function removeAllRules() {
 }
 function displayRules() { // mehod to display 'rules' as formated json data
     console.log('DisplayRules');
+}
+
+function formatSpan(id, styles, text) {
+    var _str = '<span id="'+ id + '" class="' + ruleFormat(id, styles) + '">' + text + '</span>';
+    return _str;
+}
+function ruleFormat(id, rule) {
+    if(!rule) return rule;
+    rule = rule.replace(/\s/g, ''); // remve any spaces
+    if (rule.indexOf(',') > -1) {
+        let styles = rule.split(',');
+        rule = id;
+        styles.map(function(elm){
+            rule = rule + ' rule-' + elm;
+        });
+    } else {
+        rule = id + ' rule-' + rule;
+    }
+    return rule;
+}       
+function getId(id) {
+    return id + ' ';
+}
+let startShift;
+function ruleHtmlInsertAll(html, rules) {
+    startShift = 0;
+    var _html = html;
+    rules.map(function(elm){
+        _html = ruleHtmlInsertOne(_html, elm, startShift)
+    });
+    return _html;
+}
+function ruleHtmlInsertOne(html, rule, startShift) {
+    var st = rule.start + startShift;
+    var ed = rule.end + startShift;
+    //console.log('ruleHtmlInsertOne');console.log(rule);console.log(startShift);
+    //console.log(st);
+    var _html = html.substring(0, st);
+    var _html1 = ruleToHtml(noolSrc, rule);
+    startShift = startShift + (_html1.length - rule.text.length);
+    //console.log(startShift);console.log(startShift + rule.end);
+    //console.log(html.substring(ed));
+    _html = _html + _html1 + html.substring(ed);
+    return _html;
+}
+var noolSrc, flow, Selection;
+function ruleToHtml(noolSrc, rule){
+    console.log(rule);
+
+    var m = new Selection(rule);
+    var session = flow.getSession(m);
+    session.match(function(err){
+        if(err){
+            console.error(err);
+        } else{
+            session.dispose();
+        }
+    });
+    // if (session)
+    //     session.dispose();
+    console.log(m.html);
+    return m.html;
 }

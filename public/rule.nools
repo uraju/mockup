@@ -1,24 +1,37 @@
-define Message {
+define Selection {
     obj:{},
     constructor : function (obj) {
         this.text = obj.text;
         this.id = obj.id;
         this.rules = obj.rules;   
         this.html = '';
+        this.idx = obj.id;
     }        
 
 }
-rule Hello {
-    
+//
+// Converting para's to list unordered ordered
+//
+rule OrderedUnorderd {
     when {           
-        m : Message m.text =~ /^hello\sworld$/
+        m : Selection m.rules =~ /^(unordered|ordered)[a-z,\s]/;
+    }
+    then {
+        console.log(m.rules);
+        console.log(m.text);
+    }
+}
+//
+// Apply rest of the list as css styles
+//
+rule RuleToStyle {
+    when {           
+        m : Selection m.idx =~ /^rule\d{1,5}$/
     }
     then {
         modify(m, function(){              
             this.html = formatSpan(this.id, this.rules, this.text);
-            this.text += ' ' + this.rules;
+            this.idx = getId(this.id);
         });
-        
-        
     }
 }
