@@ -5,6 +5,7 @@ define Selection {
         this.id = obj.id;
         this.rules = obj.rules;   
         this.html = '';
+        this.idx = obj.id;
     }        
 
 }
@@ -25,12 +26,12 @@ rule OrderedUnorderd {
 //
 rule RuleToStyle {
     when {           
-        m : Selection m.id =~ /^rule\d{1,5}$/
+        m : Selection m.idx =~ /^rule\d{1,5}$/
     }
     then {
         modify(m, function(){              
             this.html = formatSpan(this.id, this.rules, this.text);
-            this.id = getId(this.id);
+            this.idx = getId(this.id);
         });
     }
 }

@@ -2,7 +2,6 @@
 <html>
 <head>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.css"></link>
-    <link rel="stylesheet" href="style/avgrund.css"></link>
     <link rel="stylesheet" href="style/rules.css"></link>
 </head>
 <body>
@@ -76,7 +75,7 @@
         </div>
     </div>
     <div id="htmlSrc" class="display-none">
-        <p> some more contents here</p>
+        <p>My notes Uma devi and Bala raman</p>
         <p></p> text with no p tag
         <p>
         <p>Do you see any <span class="ui grey label">Teletubbies in here? Do you see a slender <span class="ui red circular label">2</span></span> plastic tag clipped to my shirt with my name printed on it? Do you see a little Asian child with a blank <span class="ui green label">expression on his face sitting outside on a mechanical helicopter<span class="ui red circular label">3</span></span> that shakes when you put quarters in it? No? Well, that's what you see at a toy store. And you must think you're in a toy store, because you're here shopping for an infant named Jeb. </p>
@@ -95,8 +94,8 @@
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-<script src="jquery.avgrund.min.js"></script>
-<script src="select.js"></script>
+<script type="text/javascript" src="./docs/nools.js"></script>
+<script src="rule.js"></script>
 <script>
 $(document).ready(function(){
   document.getElementById("previewDiv").innerHTML = $("#htmlSrc").html();
@@ -111,11 +110,14 @@ $(document).ready(function(){
     } else {
       console.log(' no select');
     }
-  });
-  $('#previewDiv').off('mouseup',  function() {
-    console.log('mouseup removed ...')
-  });
-
+    });
+    $.ajax({
+        url: "./rule.nools"
+    }).then(function (res) {
+        noolSrc  = res;
+        flow = nools.compile(noolSrc, {name: "select"});
+        Selection = flow.getDefined("selection");
+    });
 });
 </script>
 </body>
