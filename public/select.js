@@ -424,7 +424,7 @@ function applyRules() {
         var sel = getSelectionCharOffsetsWithin();
         rule.extended = sel;//may be limit to start and end?
         rules.push(rule); //store in global variable for later use
-        //console.log(rules);
+        console.log(rules);
         var _htm =  _htm0.substring(0, sel.start);
         _htm =  _htm + '<span id="' + rule.id + '" class="'+ style + '">' + _htm0.substring(sel.start, sel.end) + '</span>'
         _htm =  _htm + _htm0.substring(sel.end);

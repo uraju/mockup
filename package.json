@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "jquery.avgrund": "^1.3.3",
+    "nools": "^0.4.4",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "react-scripts": "1.1.4"

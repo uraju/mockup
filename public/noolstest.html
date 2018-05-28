@@ -1,0 +1,91 @@
+<html>
+
+<script type="text/javascript" src="./docs/nools.js"></script>
+<link rel="stylesheet" href="style/rules.css"></link>
+<body>
+    <p id ="output"></p> 
+<script type="text/nools" id="simple">
+
+    define Message {
+        message : "",
+        id:'',
+        rules: '',
+        constructor : function (message,id,rules) {
+            this.text = message;
+            this.id = id;
+            this.rules = rules;   
+            this.html = '';
+        }        
+
+    }
+    rule Hello {
+        
+        when {           
+            m : Message m.text =~ /^hello\sworld$/
+        }
+        then {
+            modify(m, function(){              
+                this.text += " goodbye " + this.id + ' ' + this.rules;
+                this.html = '<span id="'+ this.id + '" class="' + ruleFormat(this.rules) + '">' + this.text + '</span>';
+            });
+            
+            document.getElementById("output").innerHTML +=  m.html ;
+        }
+    }
+    
+
+</script>
+<script type="text/javascript">
+    function ruleFormat(rule) {
+        if(!rule) return rule;
+        rule = rule.replace(/\s/g, ''); // remve any spaces
+        if (rule.indexOf(',') > -1) {
+            let rules = rule.split(',');
+            rule = '';
+            rules.map(function(elm){
+                rule = rule + ' rule-' + elm;
+            });
+        } else {
+            rule = ' rule-' + rule;
+        }
+        return rule;
+    }
+    function init() {
+       //get the source
+       var source = document.getElementById("simple").innerHTML;
+             
+       //console.log(source);
+       //compile the source. The name option is required if compiling directly.
+       var flow = nools.compile(source, {name: "simple"}),
+                Message = flow.getDefined("message"),
+               
+                               session = flow.getSession();
+                               console.log(flow)
+      
+        //assert your different messages
+        //console.log(flow);  
+          
+        session.assert(new Message('hello world','01','bold, italic'));
+     
+        //session.assert(new Message({message:'hello world',id:'01'}));
+        //session.assert(new Message("goodbye"));
+        //session.assert(new Message("hello world"));
+        //this.html = '<span id="'+ this.id + '" class="' + this.rules + '">' + this.text + '</span>';
+
+        session.match();
+        // session.match(function(err){
+        //     if(err){
+        //         console.error(err);
+        //     }else{
+        //         console.log(m.message);
+        //     }
+
+        // })
+        //console.log(session.assert(new Message("Hello")));
+        //console.log(session.assert(new Message("Uma")));
+        //console.log(source);
+    }
+    init();   
+</script>
+</body>
+</html>
