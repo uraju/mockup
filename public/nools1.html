@@ -1,0 +1,57 @@
+<html>
+
+<script type="text/javascript" src="./docs/nools.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<link rel="stylesheet" href="style/rules.css"></link>
+<body>
+    <p id ="output"></p> 
+<script src="rule.nools" type="text/nools" id="simple"></script>
+<script type="text/javascript">
+function getId(id) {
+    return id + ' ';
+}
+    function formatSpan(id, rules, text) {
+        var _str = '<span id="'+ id + '" class="' + ruleFormat(id, rules) + '">' + text + '</span>';
+        return _str;
+    }
+    function ruleFormat(id, rule) {
+        if(!rule) return rule;
+        rule = rule.replace(/\s/g, ''); // remve any spaces
+        if (rule.indexOf(',') > -1) {
+            let rules = rule.split(',');
+            rule = id;
+            rules.map(function(elm){
+                rule = rule + ' rule-' + elm;
+            });
+        } else {
+            rule = id + ' rule-' + rule;
+        }
+        return rule;
+    }       
+    
+    $(document).ready(function () {
+        $.ajax({
+            url: "./rule.nools"
+        }).then(function (res) {
+            var source = res;
+            var obj = {active: true, norepeat: true, text:'hello world',id:'rule00001',rules:'bold, italic'};
+            var flow = nools.compile(source, {name: "simple"}),
+            Selection = flow.getDefined("selection");
+            var m = new Selection(obj);
+            var session = flow.getSession(m);
+           // flow = nools.compile(source, {name: "conways2d", define: {Cell: Cell}, scope: { loop: loop}});
+           session.match(function(err){
+            if(err){
+                console.error(err);
+            } else {
+               
+            };
+            //console.log(m.html);
+            document.getElementById("output").innerHTML +=  m.html ;
+         });
+        });
+    });
+
+</script>
+</body>
+</html>

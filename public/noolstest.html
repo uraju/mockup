@@ -1,31 +1,20 @@
 <html>
 
-<script type="text/javascript" src="./docs/nools.js"></script>
+
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script type="text/javascript" src="./docs/nools.js"></script>
+<script type="text/javascript" src="./rule.js"></script>
 <link rel="stylesheet" href="style/rules.css"></link>
 <body>
     <p id ="output"></p> 
-    <script src="rule.nools" type="text/nools" id="simple"></script>
     <script type="text/javascript">
     $(document).ready(function () {
         $.ajax({
             url: "./rule.nools"
         }).then(function (res) {
-            var source = res;
+            noolSrc  = res;
             var obj = {text:'myhello world',id:'rule00001',rules:'bold,italic'};
-            var flow = nools.compile(source, {name: "select"}),
-            Selection = flow.getDefined("selection");
-            var m = new Selection(obj);
-            var session = flow.getSession(m);
-            session.match(function(err){
-            if(err){
-                console.error(err);
-            } else {
-               
-            };
-            //console.log(m);
-            document.getElementById("output").innerHTML +=  m.html ;
-         });
+            document.getElementById("output").innerHTML = ruleToHtml(noolSrc, obj);
         });
     });
     </script>
