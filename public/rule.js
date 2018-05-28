@@ -532,3 +532,25 @@ function removeAllRules() {
 function displayRules() { // mehod to display 'rules' as formated json data
     console.log('DisplayRules');
 }
+
+function formatSpan(id, rules, text) {
+    var _str = '<span id="'+ id + '" class="' + ruleFormat(id, rules) + '">' + text + '</span>';
+    return _str;
+}
+function ruleFormat(id, rule) {
+    if(!rule) return rule;
+    rule = rule.replace(/\s/g, ''); // remve any spaces
+    if (rule.indexOf(',') > -1) {
+        let rules = rule.split(',');
+        rule = id;
+        rules.map(function(elm){
+            rule = rule + ' rule-' + elm;
+        });
+    } else {
+        rule = id + ' rule-' + rule;
+    }
+    return rule;
+}       
+function getId(id) {
+    return id + ' ';
+}
