@@ -1,0 +1,27 @@
+define Result {
+    value: ''
+}
+define Message {
+    obj:{},
+    constructor : function (obj) {
+        this.text = obj.message;
+        this.id = obj.id;
+        this.rules = obj.rules;   
+        this.html = '';
+    }        
+
+}
+rule Hello {
+    
+    when {           
+        m : Message m.text =~ /^hello\sworld$/
+    }
+    then {
+        modify(m, function(){              
+            this.text += " goodbye " + this.id + ' ' + this.rules;
+            this.html = formatSpan(this.id, this.rules, this.text);
+        });
+        
+        
+    }
+}
