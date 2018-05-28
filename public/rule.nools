@@ -1,10 +1,7 @@
-define Result {
-    value: ''
-}
 define Message {
     obj:{},
     constructor : function (obj) {
-        this.text = obj.message;
+        this.text = obj.text;
         this.id = obj.id;
         this.rules = obj.rules;   
         this.html = '';
@@ -18,8 +15,8 @@ rule Hello {
     }
     then {
         modify(m, function(){              
-            this.text += " goodbye " + this.id + ' ' + this.rules;
             this.html = formatSpan(this.id, this.rules, this.text);
+            this.text += ' ' + this.rules;
         });
         
         
