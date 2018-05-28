@@ -11,12 +11,12 @@ define Selection {
 rule Hello {
     
     when {           
-        m : Selection m.text =~ /^hello\sworld$/
+        m : Selection m.id =~ /^rule00001$/
     }
     then {
         modify(m, function(){              
             this.html = formatSpan(this.id, this.rules, this.text);
-            this.text += ' ' + this.rules;
+            this.id = getId(this.id);
         });
         
         

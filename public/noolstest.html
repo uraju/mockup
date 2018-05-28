@@ -25,7 +25,9 @@
         }
         return rule;
     }       
-    
+    function getId(id) {
+        return id + ' ';
+    }
     $(document).ready(function () {
         $.ajax({
             url: "./rule.nools"
@@ -42,7 +44,7 @@
             } else {
                
             };
-            console.log(m.html);
+            console.log(m);
             document.getElementById("output").innerHTML +=  m.html ;
          });
         });
