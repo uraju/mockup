@@ -416,7 +416,7 @@ function applyRules() {
     //console.log(sel);
     
     if(style.length > 0){
-        //var _htm0 = document.getElementById("previewDiv").innerHTML;
+        var _htm0 = document.getElementById("previewDiv").innerHTML;
         rule.id = getRuleId();
         rule.rules = formatedRules(style)
         rule.text = selObj.toString();
@@ -425,10 +425,11 @@ function applyRules() {
         rule.end = sel.end; 
         currentrules.push(rule); //store in global variable for later use
         console.log(currentrules);
-       // var _htm =  _htm0.substring(0, sel.start);
+        var _htm =  _htm0.substring(0, sel.start);
        // _htm =  _htm + '<span id="' + rule.id + '" class="'+ style + '">' + _htm0.substring(sel.start, sel.end) + '</span>'
-       // _htm =  _htm + _htm0.substring(sel.end);
-       // document.getElementById("previewDiv").innerHTML = _htm;
+        _htm =  _htm + ruleToHtml(noolSrc, rule); 
+        _htm =  _htm + _htm0.substring(sel.end);
+        document.getElementById("previewDiv").innerHTML = _htm;
         // update rule history table
         var _history = '';
         var aid;
@@ -457,8 +458,8 @@ function applyRules() {
         // reset toolbar
         resetToolbar();
         $("#rules-def, #icons-v, #create-rule").addClass('display-none');
-        var _html = $("#htmlSrc").html();
-        _html = ruleHtmlInsertAll(_html, currentrules);
+        //var _html = $("#htmlSrc").html();
+        //_html = ruleHtmlInsertAll(_html, currentrules);
         document.getElementById("previewDiv").innerHTML = _html;
         document.getElementById("selectedText").innerHTML = "";
         document.getElementById("selectedRules").innerHTML = "";
