@@ -123,3 +123,9 @@ padding-bottom: 10px;
     background-color: #0c0;
     color: white;
 }
+
+.ui.checkbox input:checked:focus~.box:after, .ui.checkbox input:checked:focus~label:after, .ui.checkbox input:checked~.box:after, .ui.checkbox input:checked~label:after {
+  opacity: 1;
+  color: white;
+  background: blue;
+}
