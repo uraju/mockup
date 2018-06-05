@@ -1,0 +1,10 @@
+/* color for checkbox - box */
+.ui.checkbox input:checked:focus~.box:after, .ui.checkbox input:checked:focus~label:after, .ui.checkbox input:checked~.box:after, .ui.checkbox input:checked~label:after {
+  opacity: 1;
+  color: white;
+  background: blue;
+}
+/* color for checkbox - text */
+.ui.checkbox input:focus ~ label, .ui.checked.checkbox label, .ui.checked.checkbox + label, .ui.checkbox label, .ui.checkbox + label  {
+  color: blue;
+}
